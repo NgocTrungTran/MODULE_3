@@ -1,1 +1,1 @@
-CREATE DATABASE `taocsdl`;
+CREATE DATABASE `student-manage`;
