@@ -1,0 +1,37 @@
+body{
+    font-size: 100%;
+    padding: 0;
+    margin: 0;
+    font-family: Verdana,sans-serif;
+}
+header, footer {
+    background-color: #0303c4;
+    color: white;
+    height: 40px;
+}
+footer {
+    direction: rtl;
+}
+nav div {
+    display: inline;
+    border: solid 1px #0303c4;
+    background-color: blue;
+    color: white;
+}
+section {
+    padding: 10px;
+}
+section h2 {
+    text-align: center;
+    background-color: #CDCDCD;
+}
+section p {
+    margin: 20px;
+}
+section p span{
+    font-weight: bolder;
+}
+section p a{
+    text-decoration: none;
+}
+
