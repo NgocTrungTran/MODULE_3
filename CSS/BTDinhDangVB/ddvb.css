@@ -1,0 +1,23 @@
+body {
+    font-size: 100%;
+}
+p {
+    font-family: sans-serif;
+}
+p.vb {
+    text-indent: 50px;
+}
+#bold {
+    font-weight: bold ;
+}
+#blue_w {
+    color: dodgerblue;
+}
+#blue {
+    color: #0303c4;
+}
+#kyTuNho{
+    color: #0303c4;
+    font-size: 50%;
+    vertical-align: super;
+}
