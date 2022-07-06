@@ -1,0 +1,126 @@
+body {
+    padding: 0;
+    margin: 0;
+    font-family: Verdana, sans-serif;
+}
+#header {
+    width: 100%;
+    height: 60px;
+    background-color: #696969;
+    border: 1px solid #CDCDCD;
+    position: fixed;
+}
+#left {
+    padding-top: 60px;
+    width: 20%;
+    height: 600px;
+    background-color: #e1e1e1;
+    float: left;
+}
+#content {
+    padding-top: 60px;
+    width: 60%;
+    height: 600px;
+    float: left;
+}
+#right {
+    padding-top: 60px;
+    width: 20%;
+    height: 600px;
+    background-color: #e1e1e1;
+    float: left;
+}
+#footer {
+    width: 100%;
+    height: 80px;
+    clear: both;
+    background-color: #4b4b4b;
+    border: 1px solid #CDCDCD;
+}
+#header ul, #header li {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    color: #CDCDCD;
+}
+#header li {
+    position: relative;
+    float: left;
+    margin: 0;
+    padding: 0;
+}
+#header li a {
+    width: 100px;
+    height: 60px;
+    display: block;
+    text-decoration: none;
+    text-align: center;
+    line-height: 30px;
+    /*background-color: #bbbbbb;*/
+}
+#header ul ul li a {
+    width: 200px;
+    text-align: left;
+    padding-left: 10px;
+    background-color: #ababab;
+}
+#header li a:hover {
+    background-color: #ababab;
+}
+#header ul ul{
+    position: absolute;
+    top: 60px;
+    /*left: 15px;*/
+    visibility: hidden;
+}
+#header ul li:hover ul{
+    visibility: visible;
+}
+.hcol-6 {
+    float: right;
+    padding-right: 20px;
+    color: #CDCDCD;
+}
+@media only screen and (max-width: 768px) {
+    /* For mobile phones: */
+    [class*="hcol-"] {
+        width: 100%;
+    }
+}
+@media only screen and (min-width: 768px) {
+    /* For desktop: */
+    .hcol-1 {width: 8.33%;}
+    .hcol-2 {width: 8.33%;}
+    .hcol-3 {width: 8.33%;}
+    .hcol-4 {width: 8.33%;}
+    .hcol-5 {width: 8.33%;}
+    /*.hcol-6 {width: 100%;}*/
+}
+@media only screen and (min-width: 600px) {
+    /* For tablets: */
+    .hcol-m-1 {width: 8.33%;}
+    .hcol-m-2 {width: 8.33%;}
+    .hcol-m-3 {width: 8.33%;}
+    .hcol-m-4 {width: 8.33%;}
+    .hcol-m-5 {width: 8.33%;}
+    /*.hcol-m-6 {width: 100%;}*/
+}
+#content div {
+    padding-left: 20px;
+}
+#right div {
+    margin: auto;
+    padding: 30px 20px;
+    height: 100px;
+}
+#right div p {
+    padding: 30px 0;
+    border: 1px solid gray;
+    height: 40px;
+    text-align: center;
+}
+#footer p {
+    color: white;
+    text-align: center;
+}
+
