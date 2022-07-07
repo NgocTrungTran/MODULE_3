@@ -1,0 +1,6 @@
+.dropdown-menu.show {
+    display: flex;
+}
+.dropdown-menu div {
+    font-size: small;
+}
