@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+        <link rel="stylesheet" href="css/bootstrap.css">
+    </head>
+    <body>
+        <form role="form" class="form-inline">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" placeholder="Enter Name">
+            </div>
+            <div class="form-group">
+                <label for="inputfile">File input</label>
+                <input type="file" id="inputfile">
+                <p class="form-text">Example block-level help text here.</p>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox">Check me out</label>
+            </div>
+            <button type="submit" class="btn btn-secondary">Submit</button>
+        </form>
+        <form class="row" role="form">
+            <div class="form-group">
+                <label for="firstname" class="col-md-2 col-form-label">First Name</label>
+                <div class="col-md-10">
+                    <input type="text" class="form-control" id="firstname" placeholder="Enter First Name">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="lastname" class="col-md-2 col-form-label">Last Name</label>
+                <div class="col-md-10">
+                    <input type="text" class="form-control" id="lastname" placeholder="Enter Last Name">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="offset-sm-2 col-md-10">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox">Remember me</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="offset-sm-2 col-md-10">
+                    <button type="submit" class="btn btn-secondary">Sign in</button>
+                </div>
+            </div>
+        </form>
+        <form role = "form">
+
+            <div class = "form-group">
+                <label for = "name">Label</label>
+                <input type = "text" class = "form-control" placeholder = "Text input">
+            </div>
+
+        </form>
+
+        <form role = "form">
+
+            <div class = "form-group">
+                <label for = "name">Text Area</label>
+                <textarea class = "form-control" rows = "3"></textarea>
+            </div>
+
+        </form>
+        <label for = "name">Example of Default Checkbox and radio button </label>
+
+        <div class = "checkbox">
+            <label>
+                <input type = "checkbox" value = "">Option 1
+            </label>
+        </div>
+
+        <div class = "checkbox">
+            <label>
+                <input type = "checkbox" value = "">Option 2
+            </label>
+        </div>
+
+        <div class = "radio">
+            <label>
+                <input type = "radio" name = "optionsRadios" id = "optionsRadios1" value = "option1" checked> Option 1
+            </label>
+        </div>
+
+        <div class = "radio">
+            <label>
+                <input type = "radio" name = "optionsRadios" id = "optionsRadios2" value = "option2">
+                Option 2 - selecting it will deselect option 1
+            </label>
+        </div>
+
+        <label for = "name">Example of Inline Checkbox and radio button </label>
+
+        <div>
+            <label class = "checkbox-inline">
+                <input type = "checkbox" id = "inlineCheckbox1" value = "option1"> Option 1
+            </label>
+
+            <label class = "checkbox-inline">
+                <input type = "checkbox" id = "inlineCheckbox2" value = "option2"> Option 2
+            </label>
+
+            <label class = "checkbox-inline">
+                <input type = "checkbox" id = "inlineCheckbox3" value = "option3"> Option 3
+            </label>
+
+            <label class = "checkbox-inline">
+                <input type = "radio" name = "optionsRadiosinline" id = "optionsRadios3" value = "option1" checked> Option 1
+            </label>
+
+            <label class = "checkbox-inline">
+                <input type = "radio" name = "optionsRadiosinline" id = "optionsRadios4" value = "option2"> Option 2
+            </label>
+        </div>
+        <form role = "form">
+            <div class = "form-group">
+                <label for = "name">Select list</label>
+
+                <select class = "form-control">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                </select>
+
+                <label for = "name">Mutiple Select list</label>
+
+                <select multiple class = "form-control">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                </select>
+            </div>
+            <form class="row" role="form">
+                <div class="form-group">
+                    <label class="col-md-2 col-form-label">Email</label>
+                    <div class="col-md-10">
+                        <p class="form-control-static">email@example.com</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword" class="col-md-2 col-form-label">Password</label>
+                    <div class="col-md-10">
+                        <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+                    </div>
+                </div>
+            </form>
+        </form>
+    </body>
+</html>
