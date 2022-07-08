@@ -21,16 +21,20 @@
             overflow: auto;
         }
         #position-display {
-            clear: left;
+            clear: both;
         }
         .position {
-            position: relative;
+            /*position: fixed;*/
         }
-        .position-child {
-            position: absolute;
-            /*position: relative;*/
-            top: 10px;
-            left: 10px;
+        .position-child1 {
+            position: relative;
+            top: 50px;
+            left: 100px;
+        }
+        .position-child2 {
+            position: relative;
+            top: 100px;
+            left: 100px;
         }
         .display {
             margin-top: 200px;
@@ -86,8 +90,11 @@
         <h1>Demo Position và Display</h1>
         <p>Position</p>
         <div class="position" style="border: 1px solid blue; background-color: aqua; width: 500px; height: 300px">
-            <div class="position-child">
-                <div style="border: 1px solid yellow; background-color: red; width: 200px; height: 50px"></div>
+            <div class="position-child1">
+                <div style="border: 1px solid yellow; background-color: red; width: 200px; height: 50px">Child 1</div>
+            </div>
+            <div class="position-child2">
+                <div style="border: 1px solid yellow; background-color: #f8dddd; width: 200px; height: 50px">Child 2</div>
             </div>
         </div>
         <div class="display">
@@ -101,6 +108,9 @@
                     <div style="border: 1px solid blue; background-color: green"></div>
                     <div style="border: 1px solid blue; background-color: blue"></div>
                 </div>
+        </div>
+        <div>
+            <i></i>
         </div>
     </div>
 </body>
