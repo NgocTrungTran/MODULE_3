@@ -19,4 +19,5 @@ public interface IUserDAO {
     List<User> sortFullNameDEC(List<User> userList);
     List<User> searchNameStudent(String name);
     void addUserTransaction(User user, int[] permisions);
+    void insertUpdateWithoutTransaction();
 }
