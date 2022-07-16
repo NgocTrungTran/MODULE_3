@@ -49,13 +49,14 @@
         </c:forEach>
     </table>
     <div>
-        <form method="post" action="user/search.jsp">
+        <form method="post" action="/users?action=search">
         <p>Search by country</p>
         <input type="text" name="search" id="search">
         <input type="submit" value="Search">
         </form>
     </div>
-    <p><a href="/users?action=sort">Sort by name ADC</a></p>
+    <p><a href="/users?action=sortasc">Sort by name ASC</a></p>
+    <p><a href="/users?action=sortdesc">Sort by name DESC</a></p>
 </div>
 </body>
 </html>

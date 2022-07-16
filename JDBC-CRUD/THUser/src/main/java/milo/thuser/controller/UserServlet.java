@@ -5,7 +5,6 @@ import milo.thuser.dao.ICountryDAO;
 import milo.thuser.dao.UserDAO;
 import milo.thuser.model.Country;
 import milo.thuser.model.User;
-import org.graalvm.compiler.lir.LIRInstruction;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -82,8 +81,14 @@ public class UserServlet extends HttpServlet {
                 case "delete":
                     deleteUser(request, response);
                     break;
-                case "sort":
-                    listUserSort(request, response);
+                case "sortasc":
+                    listUserSortAsc (request, response);
+                    break;
+                case "sortdesc":
+                    listUserSortDesc (request, response);
+                    break;
+                case "permision":
+                    addUserPermision(request, response);
                     break;
                 default:
                     listUser(request, response);
@@ -101,20 +106,31 @@ public class UserServlet extends HttpServlet {
         RequestDispatcher dispatcher = request.getRequestDispatcher("/user/list.jsp");
         dispatcher.forward(request, response);
     }
-    private void listUserSort(HttpServletRequest request, HttpServletResponse response)
+    private void listUserSortAsc(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
         List<User> listUser = userDAO.selectAllUsers();
         List<User> listSortADC = userDAO.sortFullNameADC ( listUser );
-        request.setAttribute("listSort", listSortADC);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/user/sort.jsp");
+        request.setAttribute("listUser", listSortADC);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/user/list.jsp");
+        dispatcher.forward (request, response);
+    }
+    private void listUserSortDesc(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException, ServletException {
+        List<User> listUser = userDAO.selectAllUsers();
+        List<User> listSortDESC = userDAO.sortFullNameDEC ( listUser );
+        request.setAttribute("listUser", listSortDESC);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/user/list.jsp");
         dispatcher.forward (request, response);
     }
     private void listUserSearch(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
         String nameSearch = request.getParameter ( "search" );
         List<User> usersSearch = userDAO.searchNameStudent ( nameSearch );
-        request.setAttribute("usersSearch", usersSearch);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/user/search.jsp");
+        for (User user : usersSearch) {
+            System.out.println (user);
+        }
+        request.setAttribute("listUser", usersSearch);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/user/list.jsp");
         dispatcher.forward (request, response);
     }
 
@@ -276,5 +292,12 @@ public class UserServlet extends HttpServlet {
         RequestDispatcher dispatcher = request.getRequestDispatcher("/user/list.jsp");
         dispatcher.forward(request, response);
     }
+    private void addUserPermision(HttpServletRequest request, HttpServletResponse response) {
 
-}
+        User user = new User("quan", "quan.nguyen@codegym.vn", 1);
+
+        int[] permision = {1, 2, 4};
+
+        userDAO.addUserTransaction(user, permision);
+
+    }}
