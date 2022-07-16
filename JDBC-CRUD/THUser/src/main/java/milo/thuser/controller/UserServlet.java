@@ -53,6 +53,9 @@ public class UserServlet extends HttpServlet {
                 case "edit":
                     updateUser(request, response);
                     break;
+                case "search":
+                    listUserSearch(request, response);
+                    break;
             }
         } catch (SQLException ex) {
             throw new ServletException(ex);
@@ -80,7 +83,7 @@ public class UserServlet extends HttpServlet {
                     deleteUser(request, response);
                     break;
                 case "sort":
-                    deleteUser(request, response);
+                    listUserSort(request, response);
                     break;
                 default:
                     listUser(request, response);
@@ -98,6 +101,23 @@ public class UserServlet extends HttpServlet {
         RequestDispatcher dispatcher = request.getRequestDispatcher("/user/list.jsp");
         dispatcher.forward(request, response);
     }
+    private void listUserSort(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException, ServletException {
+        List<User> listUser = userDAO.selectAllUsers();
+        List<User> listSortADC = userDAO.sortFullNameADC ( listUser );
+        request.setAttribute("listSort", listSortADC);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/user/sort.jsp");
+        dispatcher.forward (request, response);
+    }
+    private void listUserSearch(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException, ServletException {
+        String nameSearch = request.getParameter ( "search" );
+        List<User> usersSearch = userDAO.searchNameStudent ( nameSearch );
+        request.setAttribute("usersSearch", usersSearch);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/user/search.jsp");
+        dispatcher.forward (request, response);
+    }
+
 
     private void showNewForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -110,7 +130,8 @@ public class UserServlet extends HttpServlet {
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        User existingUser = userDAO.selectUser(id);
+//        User existingUser = userDAO.selectUser(id);
+        User existingUser = userDAO.getUserById ( id );
         RequestDispatcher dispatcher = request.getRequestDispatcher("/user/edit.jsp");
         request.setAttribute("user", existingUser);
         dispatcher.forward(request, response);
@@ -184,7 +205,7 @@ public class UserServlet extends HttpServlet {
 
                 if ( flag ) {
                     // Create user susscess
-                    userDAO.insertUser ( user );
+                    userDAO.insertUserStore ( user );
 
 
                     User u = new User ();

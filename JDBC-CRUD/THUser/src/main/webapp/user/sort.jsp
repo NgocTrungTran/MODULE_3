@@ -1,8 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: FPTshop sapa
-  Date: 13/07/2022
-  Time: 11:11 CH
+  Date: 16/07/2022
+  Time: 3:46 CH
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -14,7 +14,7 @@
 </head>
 <body>
 <center>
-    <h1>User Management</h1>
+    <h1>User Sort Ascending</h1>
     <h2>
         <a href="/users?action=create">Add New User</a>
     </h2>
@@ -29,7 +29,7 @@
             <th>Country</th>
             <th>Actions</th>
         </tr>
-        <c:forEach var="user" items="${requestScope.listUser}">
+        <c:forEach var="user" items="${requestScope.listSort}">
             <tr>
                 <td><c:out value="${user.getId()}"/></td>
                 <td><c:out value="${user.getName()}"/></td>
@@ -50,12 +50,12 @@
     </table>
     <div>
         <form method="post" action="user/search.jsp">
-        <p>Search by country</p>
-        <input type="text" name="search" id="search">
-        <input type="submit" value="Search">
+            <p>Search by country</p>
+            <input type="text" name="search" id="search">
+            <input type="submit" value="Search">
         </form>
     </div>
-    <p><a href="/users?action=sort">Sort by name ADC</a></p>
+    <p><a href="/users?action=sort">Sort by name</a></p>
 </div>
 </body>
 </html>

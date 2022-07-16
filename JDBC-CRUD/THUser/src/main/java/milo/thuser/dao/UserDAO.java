@@ -4,6 +4,7 @@ import milo.thuser.model.User;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class UserDAO implements IUserDAO{
@@ -190,6 +191,109 @@ public class UserDAO implements IUserDAO{
             return null;
 
         }
+    }
 
+    @Override
+    public List<User> sortFullNameADC(List<User> userList) {
+        userList.sort ( new Comparator<User> () {
+            @Override
+            public int compare(User o1, User o2) {
+                return o1.getName ().compareTo ( o2.getName () );
+            }
+        } );
+        return userList;
+    }
+
+    @Override
+    public List<User> sortFullNameDEC(List<User> userList) {
+        userList.sort ( new Comparator<User> () {
+            @Override
+            public int compare(User o1, User o2) {
+                return o2.getName ().compareTo ( o1.getName () );
+            }
+        } );
+        return userList;
+    }
+
+    @Override
+    public List<User> searchNameStudent(String name) {
+        List<User> users = selectAllUsers ();
+        List<User> usersSearch = new ArrayList<>();
+        for (User user:users) {
+            if ( user.getName ().toLowerCase ().contains ( name.toLowerCase ().trim () ) ){
+                usersSearch.add ( user );
+            }
+        }
+        return usersSearch;
+    }
+
+    @Override
+    public User getUserById(int id) {
+        User user = null;
+
+        String query = "{CALL get_user_by_id(?)}";
+
+        // Step 1: Establishing a Connection
+
+        try (Connection connection = getConnection();
+
+             // Step 2:Create a statement using connection object
+
+             CallableStatement callableStatement = connection.prepareCall(query);) {
+
+            callableStatement.setInt(1, id);
+
+            // Step 3: Execute the query or update query
+
+            ResultSet rs = callableStatement.executeQuery();
+
+            // Step 4: Process the ResultSet object.
+
+            while (rs.next()) {
+
+                String name = rs.getString("name");
+
+                String email = rs.getString("email");
+
+                int idCountry = rs.getInt ("idCountry");
+
+                user = new User(id, name, email, idCountry);
+
+            }
+
+        } catch (SQLException e) {
+
+            printSQLException(e);
+
+        }
+
+        return user;
+    }
+
+    @Override
+    public void insertUserStore(User user) throws SQLException {
+        String query = "{CALL insert_user(?,?,?)}";
+
+        // try-with-resource statement will auto close the connection.
+
+        try (Connection connection = getConnection();
+
+             CallableStatement callableStatement = connection.prepareCall(query);) {
+
+            callableStatement.setString(1, user.getName());
+
+            callableStatement.setString(2, user.getEmail());
+
+            callableStatement.setInt (3, user.getCountry());
+
+            System.out.println(callableStatement);
+
+            callableStatement.executeUpdate();
+
+        } catch (SQLException e) {
+
+            printSQLException(e);
+
+        }
     }
 }
