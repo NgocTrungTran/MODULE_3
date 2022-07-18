@@ -57,6 +57,7 @@
     </div>
     <p><a href="/users?action=sortasc">Sort by name ASC</a></p>
     <p><a href="/users?action=sortdesc">Sort by name DESC</a></p>
+    <p><a href="/users?action=p">Page</a></p>
 </div>
 </body>
 </html>

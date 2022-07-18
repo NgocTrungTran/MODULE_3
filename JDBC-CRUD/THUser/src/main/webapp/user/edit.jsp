@@ -27,25 +27,25 @@
                     Edit User
                 </h2>
             </caption>
-            <c:if test="${user != null}">
-                <input type="hidden" name="id" value="<c:out value='${user.id}' />"/>
-            </c:if>
-            <tr>
-                <th>User Name:</th>
-                <td>
-                    <input type="text" name="name" size="45"
-                           value="<c:out value='${user.name}' />"
-                    />
-                </td>
-            </tr>
-            <tr>
-                <th>User Email:</th>
-                <td>
-                    <input type="text" name="email" size="45"
-                           value="<c:out value='${user.email}' />"
-                    />
-                </td>
-            </tr>
+                <c:if test="${user != null}">
+                    <input type="hidden" name="id" value="${id}"/>
+                </c:if>
+                <tr>
+                    <th>User Name:</th>
+                    <td>
+                        <input type="text" name="name" size="45"
+                               value="${name}"
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <th>User Email:</th>
+                    <td>
+                        <input type="text" name="email" size="45"
+                               value="${email}"
+                        />
+                    </td>
+                </tr>
             <tr>
                 <th>Country:</th>
                 <td>
@@ -53,7 +53,7 @@
                     <%--                           value="<c:out value='${user.country}' />"--%>
                     <%--                    />--%>
                     <select name="idCountry">
-                        <c:forEach items="${listCountry}" var="country">
+                        <c:forEach items="${applicationScope.listCountry}" var="country">
                             <option value="${country.getId()}">${country.getName()}</option>
                         </c:forEach>
                     </select>

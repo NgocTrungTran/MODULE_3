@@ -44,6 +44,9 @@ public class UserDAO implements IUserDAO{
 
     private static final String SQL_TABLE_DROP = "DROP TABLE IF EXISTS EMPLOYEE";
 
+    Connection connection;
+    Statement stmt;
+    private int noOfRecords;
     public UserDAO() {
 
     }
@@ -89,7 +92,7 @@ public class UserDAO implements IUserDAO{
             while (rs.next()) {
                 String name = rs.getString("name");
                 String email = rs.getString("email");
-                int idCountry = rs.getInt ("idCountry");
+                int idCountry = rs.getInt ("idcountry");
                 user = new User(id, name, email, idCountry);
             }
         } catch (SQLException e) {
@@ -278,7 +281,7 @@ public class UserDAO implements IUserDAO{
 
                 String email = rs.getString("email");
 
-                int idCountry = rs.getInt ("idCountry");
+                int idCountry = rs.getInt ("idcountry");
 
                 user = new User(id, name, email, idCountry);
 
@@ -574,6 +577,46 @@ public class UserDAO implements IUserDAO{
             e.printStackTrace();
 
         }
+    }
+    public List<User> viewAllUsers(int offset, int noOfRecords) {
+        String query = "select SQL_CALC_FOUND_ROWS * from users limit "
+                + offset + ", " + noOfRecords;
+        List<User> list = new ArrayList<User>();
+        User user = null;
+        try {
+            connection = getConnection ();
+            stmt =connection.createStatement ();
+            ResultSet rs = stmt.executeQuery ( query );
+            while (rs.next ()) {
+                user = new User ();
+                user.setId ( rs.getInt ( "id" ) );
+                user.setName ( rs.getString ( "name" ) );
+                user.setEmail ( rs.getString ( "email" ) );
+                user.setCountry ( rs.getInt ( "idCountry" ) );
+                list.add ( user );
+            }
+            rs.close ();
 
+            rs = stmt.executeQuery ( "SELECT FOUND_ROWS()" );
+            if ( rs.next () ){
+                this.noOfRecords =rs.getInt ( 1 );
+            }
+        }catch (SQLException e) {
+            e.printStackTrace ();
+        } finally
+        {
+            try {
+                if ( stmt != null )
+                    stmt.close ();
+                if ( connection != null )
+                    connection.close ();
+            } catch (SQLException e) {
+                e.printStackTrace ();
+            }
+        }
+        return list;
+    }
+    public int getNoOfRecords() {
+        return noOfRecords;
     }
 }

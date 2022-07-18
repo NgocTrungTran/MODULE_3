@@ -8,6 +8,7 @@ import milo.thuser.model.User;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +35,10 @@ public class UserServlet extends HttpServlet {
         if(this.getServletContext ().getAttribute ( "listCountry" ) == null) {
             this.getServletContext ().setAttribute ( "listCountry", iCountryDAO.selectAllCountry () );
         }
+    }
+
+    public UserServlet() {
+        super();
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -65,6 +70,7 @@ public class UserServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("utf-8");
+
         String action = request.getParameter("action");
         if (action == null) {
             action = "";
@@ -96,6 +102,9 @@ public class UserServlet extends HttpServlet {
                 case "test-use-tran":
                     testUseTran(request, response);
                     break;
+                case "p":
+                    listUserPage (request, response);
+                    break;
                 default:
                     listUser(request, response);
                     break;
@@ -103,6 +112,7 @@ public class UserServlet extends HttpServlet {
         } catch (SQLException ex) {
             throw new ServletException(ex);
         }
+
     }
 
     private void listUser(HttpServletRequest request, HttpServletResponse response)
@@ -110,6 +120,32 @@ public class UserServlet extends HttpServlet {
         List<User> listUser = userDAO.selectAllUsers();
         request.setAttribute("listUser", listUser);
         RequestDispatcher dispatcher = request.getRequestDispatcher("/user/list.jsp");
+        dispatcher.forward(request, response);
+    }
+    private void listUserPage(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException, ServletException {
+//        List<User> listUser = userDAO.selectAllUsers();
+//        request.setAttribute("listUser", listUser);
+//        RequestDispatcher dispatcher = request.getRequestDispatcher("/user/displayUsers.jsp");
+//        dispatcher.forward(request, response);
+
+        int page = 1;
+        int recordsPerPage = 3;
+        if(request.getParameter("page") != null)
+            page = Integer.parseInt(request.getParameter("page"));
+        UserDAO dao = new UserDAO();
+        List<User> list = dao.viewAllUsers ((page-1)*recordsPerPage,
+                recordsPerPage);
+        int noOfRecords = dao.getNoOfRecords();
+        int noOfPages = (int) Math.ceil(noOfRecords * 1.0 / recordsPerPage);
+        request.setAttribute("listUser", list);
+        request.setAttribute("noOfPages", noOfPages);
+        request.setAttribute("currentPage", page);
+        RequestDispatcher view = request.getRequestDispatcher("/user/displayUsers.jsp");
+        view.forward(request, response);
+
+        request.setAttribute("listUser", list);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/user/displayUsers.jsp");
         dispatcher.forward(request, response);
     }
     private void listUserSortAsc(HttpServletRequest request, HttpServletResponse response)
@@ -153,9 +189,14 @@ public class UserServlet extends HttpServlet {
             throws SQLException, ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
 //        User existingUser = userDAO.selectUser(id);
-        User existingUser = userDAO.getUserById ( id );
+        User existingUser = userDAO.selectUser ( id );
+        request.setAttribute("id", existingUser.getId ());
+        request.setAttribute("name", existingUser.getName ());
+        request.setAttribute("email", existingUser.getEmail ());
+
+        System.out.println (existingUser.getEmail ());
         RequestDispatcher dispatcher = request.getRequestDispatcher("/user/edit.jsp");
-        request.setAttribute("user", existingUser);
+
         dispatcher.forward(request, response);
 
     }
