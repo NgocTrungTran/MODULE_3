@@ -518,10 +518,6 @@
     </div>
     <!-- END wrapper -->
 
-    <!-- Right Sidebar -->
-    
-    <!-- /Right-bar -->
-
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
 

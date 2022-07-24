@@ -39,5 +39,8 @@
         </table>
     </form>
 </div>
+<div>
+    ${errors}
+</div>
 </body>
 </html>

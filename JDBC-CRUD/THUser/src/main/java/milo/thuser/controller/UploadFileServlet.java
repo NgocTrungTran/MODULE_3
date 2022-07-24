@@ -24,10 +24,23 @@ public class UploadFileServlet extends HttpServlet {
             // refines the fileName in case it is an absolute path
             fileName = new File ( fileName ).getName ();
             part.write ( this.getFolderUpload ().getAbsolutePath () + File.separator + fileName );
+            System.out.println (fileName);
         }
         request.setAttribute ( "message", "Upload File Success!" );
         getServletContext ().getRequestDispatcher ( "/result.jsp" ).forward ( request, response );
     }
+
+//    @Override
+//    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        for (Part part : request.getParts ()) {
+//            String fileName = extractFileName ( part );
+//            // refines the fileName in case it is an absolute path
+//            fileName = new File ( fileName ).getName ();
+//            part.write ( this.getFolderUpload ().getAbsolutePath () + File.separator + fileName );
+//        }
+//        request.setAttribute ( "message", "Upload File Success!" );
+//        getServletContext ().getRequestDispatcher ( "/result.jsp" ).forward ( request, response );
+//    }
 
     /**
      * Extracts file name from HTTP header content-disposition
@@ -44,7 +57,7 @@ public class UploadFileServlet extends HttpServlet {
     }
 
     public File getFolderUpload() {
-        File folderUpload = new File ( System.getProperty ( "user.home" ) + "/Uploads" );
+        File folderUpload = new File ( System.getProperty ( " D:/files" ) + "/Uploads" );
         if ( !folderUpload.exists () ) {
             folderUpload.mkdirs ();
         }

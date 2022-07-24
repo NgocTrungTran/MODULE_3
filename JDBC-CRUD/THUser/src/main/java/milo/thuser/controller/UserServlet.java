@@ -130,7 +130,7 @@ public class UserServlet extends HttpServlet {
 //        dispatcher.forward(request, response);
 
         int page = 1;
-        int recordsPerPage = 3;
+        int recordsPerPage = 5;
         if(request.getParameter("page") != null)
             page = Integer.parseInt(request.getParameter("page"));
         UserDAO dao = new UserDAO();
@@ -210,7 +210,7 @@ public class UserServlet extends HttpServlet {
 //        userDAO.insertUser ( newUser );
 //        RequestDispatcher dispatcher = request.getRequestDispatcher ( "/user/create.jsp" );
 //        dispatcher.forward ( request, response );
-////        response.sendRedirect ( "/users" );
+//        response.sendRedirect ( "/users" );
         User user = new User ();
         boolean flag = true;
         Map<String, String> hashMap = new HashMap<String, String>(); // Luu lai truong nao bi loi va loi gi
@@ -268,7 +268,7 @@ public class UserServlet extends HttpServlet {
 
                 if ( flag ) {
                     // Create user susscess
-                    userDAO.insertUserStore ( user );
+                    userDAO.insertUser ( user );
 
 
                     User u = new User ();

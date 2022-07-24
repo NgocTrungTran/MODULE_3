@@ -4,7 +4,9 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
+import java.util.Date;
 
 public class User {
      private int id;
