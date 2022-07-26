@@ -53,3 +53,5 @@
 </script>
 <%--<script src="/assets/jquery/js/jquery.js"></script>--%>
 <%--<script src="/assets/jquery/js/jquery.nice-select.js"></script>--%>
+<script src="/assets/jquery/js/jquery.js"></script>
+<script src="/assets/jquery/js/jquery.nice-select.js"></script>

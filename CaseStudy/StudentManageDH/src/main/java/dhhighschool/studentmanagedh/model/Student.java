@@ -107,6 +107,7 @@ public class Student {
 
     }
 
+    @Length(min = 10, max = 10, message = "Code not exits!")
     public String getCode() {
         return code;
     }
@@ -116,7 +117,8 @@ public class Student {
     }
 
     @NotEmpty(message = "Firstname not empty!")
-    @Length(min = 1, max = 30, message = "Length of Firstname form 3 - 30 character ")
+    @Length(min = 3, max = 45, message = "Length of Firstname form 3 - 45 character ")
+    @Pattern(regexp = "([A-Z])([a-z]){2,45}", message = "Format firstname not right!")
     public String getFirstName() {
         return firstName;
     }
@@ -126,7 +128,8 @@ public class Student {
     }
 
     @NotEmpty(message = "Lastname not empty!")
-    @Length(min = 1, max = 60, message = "Length of Lastname form 3 - 60 character ")
+    @Length(min = 3, max = 45, message = "Length of Lastname form 3 - 45 character ")
+    @Pattern(regexp = "(([A-Z])([a-z]){2,45} ?)+", message = "Format lastname not right!")
     public String getLastName() {
         return lastName;
     }
@@ -203,6 +206,7 @@ public class Student {
         this.updateDate = updateDate;
     }
 
+    @Pattern(regexp = "([12])", message = "Not Exists role id!")
     public int getRole_id() {
         return role_id;
     }

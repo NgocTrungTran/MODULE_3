@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Add Student</title>
+    <title>Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description">
     <meta content="Coderthemes" name="author">
@@ -110,6 +110,11 @@
                                             <p><c:out value="${updateDate}"/></p>
                                         </div>
                                     </div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <button type="button" class="btn btn-secondary waves-effect waves-light"><a
+                                            href="/students?action=list"><b style="color: white;">Back</b></a>
+                                    </button>
                                 </div>
                             </div> <!-- end card-body-->
                         </div> <!-- end card-->

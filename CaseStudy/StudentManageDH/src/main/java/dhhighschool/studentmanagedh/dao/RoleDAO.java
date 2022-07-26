@@ -94,6 +94,18 @@ public class RoleDAO implements IRoleDAO{
             printSQLException ( e );
         }
     }
+
+    @Override
+    public boolean checkRoleById(int id) throws SQLException, ClassNotFoundException {
+        List<Role> listRoles = selectAllRoles ();
+        for (Role role : listRoles) {
+            if (role.getR_id () == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void printSQLException(SQLException ex) {
         for (Throwable e : ex) {
             if (e instanceof SQLException) {

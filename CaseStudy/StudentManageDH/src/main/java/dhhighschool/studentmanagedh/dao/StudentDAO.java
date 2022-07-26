@@ -18,7 +18,7 @@ public class StudentDAO implements IStudentDAO {
     private static final String SELECT_ALL_STUDENTS_SQL = "select *\n" +
             "from students\n" +
             "WHERE role_id = 2 and remove = 1;";
-    private static final String SELECT_CLASS_STUDENTS_SQL = "select * from students WHERE role_id = 2 and remove = 1 and class_id = ?;";
+    private static final String SELECT_CLASS_STUDENTS_SQL = "select * from students WHERE role_id = 2 and remove = 1 and class_id = ? ;";
     private static final String SELECT_TRASH_STUDENTS_SQL = "select *\n" +
             "from students\n" +
             "WHERE role_id = 2 and remove = 0;";
@@ -92,13 +92,11 @@ public class StudentDAO implements IStudentDAO {
     @Override
     public List<Student> selectListClassStudent(int offset, int noOfRecords, int classId) throws SQLException {
         Connection connection = getConnection ();
-        System.out.println ( "numberpage" );
-
+        String query = "select SQL_CALC_FOUND_ROWS * from students WHERE role_id = 2 and remove = 1 and class_id = ? limit " + offset + "," + noOfRecords;
         List<Student> list = new ArrayList<> ();
-        PreparedStatement ps = connection.prepareStatement ( SELECT_CLASS_STUDENTS_SQL );
+        PreparedStatement ps = connection.prepareStatement ( query );
         ps.setInt ( 1, classId );
 
-        System.out.println ( this.getClass () + " get list class query: " + ps );
         ResultSet rs = ps.executeQuery ();
         while (rs.next ()) {
             Student student = new Student ();

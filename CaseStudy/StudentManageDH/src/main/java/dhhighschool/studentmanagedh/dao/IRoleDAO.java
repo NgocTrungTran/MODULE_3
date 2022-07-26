@@ -9,4 +9,5 @@ public interface IRoleDAO {
     List<Role> selectAllRoles();
     Role selectRole(int id);
     void insertRole(Role role) throws SQLException;
+    boolean checkRoleById(int id) throws SQLException, ClassNotFoundException;
 }

@@ -54,7 +54,8 @@
                                     </div>
                                 </div>
                                 <div class="col-5" style="float: left">
-                                    <form method="post" action="/students?action=search">
+                                    <form method="get" action="/students?action=list">
+                                        <input type="hidden" value="search" name="action">
                                         <div class="input-group">
                                             <input type="search" class="form-control" name="search"
                                                    placeholder="code, firstname, lastname, email, phone, or address">
@@ -64,10 +65,11 @@
                                         </div>
                                     </form>
                                 </div>
-                                <form action="/students?action=classes" method="post">
+                                <form action="/students?action=classes" method="get">
+                                    <input type="hidden" value="classes" name="action">
                                     <div class="col-3" style="float: left">
                                         <div class="form-group mb-3">
-                                            <select id="validationCustom08" name="classes" class="nice-select">
+                                            <select id="validationCustom08" name="classes" class="select-css">
                                                 <option data-display="Select" value="0">Nothing</option>
                                                 <c:forEach var="classes" items="${applicationScope.listClass}">
                                                     <option value="${classes.getC_id()}">
@@ -168,26 +170,26 @@
 
                                             <c:if test="${requestScope.currentPage != 1}">
                                                 <li class="page-item"><a class="page-link"
-                                                                         href="/students?action=list&page=${requestScope.currentPage - 1}">Previous</a>
+                                                                         href="/students?action=list&page=${requestScope.currentPage - 1}&search=${requestScope.search}">Previous</a>
                                                 </li>
                                             </c:if>
                                             <c:forEach begin="1" end="${noOfPages}" var="i">
                                                 <c:choose>
                                                     <c:when test="${requestScope.currentPage eq i}">
                                                         <li class="page-item"><a class="page-link"
-                                                                                 href="/students?action=list&page=${i}">${i}</a>
+                                                                                 href="/students?action=list&page=${i}&search=${requestScope.search}">${i}</a>
                                                         </li>
                                                     </c:when>
                                                     <c:otherwise>
                                                         <li class="page-item"><a class="page-link"
-                                                                                 href="/students?action=list&page=${i}">${i}</a>
+                                                                                 href="/students?action=list&page=${i}&search=${requestScope.search}">${i}</a>
                                                         </li>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </c:forEach>
                                             <c:if test="${requestScope.currentPage lt requestScope.noOfPages}">
                                                 <li class="page-item"><a class="page-link"
-                                                                         href="/students?action=list&page=${requestScope.currentPage + 1}">Next</a>
+                                                                         href="/students?action=list&page=${requestScope.currentPage + 1}&search=${requestScope.search}">Next</a>
                                                 </li>
                                             </c:if>
                                         </ul>
@@ -213,14 +215,6 @@
 </body>
 </html>
 <script>
-    // $(document).ready(function () {
-    //     $("#myInput").on("keyup", function () {
-    //         var value = $(this).val().toLowerCase();
-    //         $("#myTable tr").filter(function () {
-    //             $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-    //         });
-    //     });
-    // });
     $(document).ready(function () {
         $('select').niceSelect();
     });

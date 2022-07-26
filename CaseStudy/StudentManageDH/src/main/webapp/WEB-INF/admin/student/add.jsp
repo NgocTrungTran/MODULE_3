@@ -50,7 +50,7 @@
 
                 </div>
                 <div class="row"
-                     style="align-items: center; justify-content: center; margin-top: 20px; margin-left: 100px">
+                     style="align-items: center; justify-content: center; margin-top: 20px; margin-left: 100px;">
                     <div class="col-lg-8">
                         <div class="card">
                             <div class="card-body">
@@ -144,25 +144,38 @@
 
 
                                     <div class="form-group mb-3" id="class_id">
-                                        <label for="validationCustom08" style="margin-left: 10px">Class</label>
-                                        <select id="validationCustom08" name="classes">
-                                            <c:forEach var="classes" items="${applicationScope.listClass}">
+                                        <label for="validationCustom08">Class</label>
+                                        <select id="validationCustom08" name="classes" class="form-select" aria-label="Default select example">
+                                            <c:forEach var="classes"
+                                                       items="${applicationScope.listClass}">
                                                 <option value="${classes.getC_id()}">
                                                     <c:out value="${classes.getClassName() }"/>
                                                 </option>
                                             </c:forEach>
                                         </select>
+                                        <%--                                        <button type="button" class="btn btn-primary dropdown-toggle"--%>
+                                        <%--                                                data-toggle="dropdown"></button>--%>
+                                        <%--                                        <c:forEach var="classes" items="${applicationScope.listClass}">--%>
+                                        <%--                                            <div id="validationCustom08" class="dropdown-menu">--%>
+                                        <%--                                                <input type="hidden" name="class" value="${classes.getC_id()}">--%>
+                                        <%--                                                <span>--%>
+                                        <%--                                                    <c:out value="${classes.getClassName() }"/>--%>
+                                        <%--                                                </span>--%>
+                                        <%--                                            </div>--%>
+                                        <%--                                        </c:forEach>--%>
                                     </div>
-                                    <button class="btn btn-primary" type="submit" id="submit_add"><b style="color: white;">Add</b></button>
-                                    <button class="btn btn-warning" type="reset"><b style="color: white;">Reset</b></button>
+                                    <button class="btn btn-primary" type="submit" id="submit_add"><b
+                                            style="color: white;">Add</b></button>
+                                    <button class="btn btn-warning" type="reset"><b style="color: white;">Reset</b>
+                                    </button>
                                     <button type="button" class="btn btn-secondary waves-effect waves-light"><a
                                             href="/students?action=list"><b style="color: white;">Back</b></a>
                                     </button>
-<%--                                    <div class="form-group mb-3" style="position: fixed; top: 20%; left: 50%;">--%>
-<%--                                        <h4>Do you want add this student? </h4>--%>
-<%--                                        <button style="margin-left: 87px" type="submit">Yes</button>--%>
-<%--                                        <button type="button">No</button>--%>
-<%--                                    </div>--%>
+                                    <%--                                    <div class="form-group mb-3" style="position: fixed; top: 20%; left: 50%;">--%>
+                                    <%--                                        <h4>Do you want add this student? </h4>--%>
+                                    <%--                                        <button style="margin-left: 87px" type="submit">Yes</button>--%>
+                                    <%--                                        <button type="button">No</button>--%>
+                                    <%--                                    </div>--%>
                                 </form>
                                 <div id="alertFormat">
                                     ${errors}
@@ -207,5 +220,7 @@
 </body>
 </html>
 <script>
-
+    // $(document).ready(function () {
+    //     $('select').niceSelect();
+    // });
 </script>
