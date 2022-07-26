@@ -1,6 +1,7 @@
 package dhhighschool.studentmanagedh.dao;
 
 import dhhighschool.studentmanagedh.model.Classes;
+import dhhighschool.studentmanagedh.model.Role;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -91,6 +92,17 @@ public class ClassDAO implements IClassDAO {
         } catch (SQLException e) {
             printSQLException ( e );
         }
+    }
+
+    @Override
+    public boolean checkClassById(int id) throws SQLException, ClassNotFoundException {
+        List<Classes> classesList = selectAllClass ();
+        for (Classes role : classesList) {
+            if (role.getC_id () == id) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void printSQLException(SQLException ex) {

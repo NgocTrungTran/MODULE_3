@@ -15,10 +15,24 @@ public class StudentDAO implements IStudentDAO {
 
     private static final String INSERT_STUDENT_SQL = "INSERT INTO students(code ,firstName, lastName, dayBirth, email, phoneNum, address, avatar, class_id, role_id)\n" +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    private static final String SELECT_SCORE_STUDENTS_SQL = "SELECT \n" +
+            "        `s`.`code` AS `code`,\n" +
+            "        `s`.`firstName` AS `firstName`,\n" +
+            "        `s`.`lastName` AS `lastName`,\n" +
+            "        `s`.`class_id` AS `class_id`,\n" +
+            "        `t`.`subjects_id` AS `subjects_id`,\n" +
+            "        `t`.`f_testScore` AS `f_testScore`,\n" +
+            "        `t`.`s_testScore` AS `s_testScore`,\n" +
+            "        `t`.`t_testScore` AS `t_testScore`,\n" +
+            "        `t`.`classification_id` AS `classification_id`\n" +
+            "    FROM\n" +
+            "        (`students` `s`\n" +
+            "        JOIN `testscores` `t` ON ((`s`.`code` = `t`.`student_code`)))\n" +
+            "    WHERE\n" +
+            "        (`s`.`code` = ?);";
     private static final String SELECT_ALL_STUDENTS_SQL = "select *\n" +
             "from students\n" +
             "WHERE role_id = 2 and remove = 1;";
-    private static final String SELECT_CLASS_STUDENTS_SQL = "select * from students WHERE role_id = 2 and remove = 1 and class_id = ? ;";
     private static final String SELECT_TRASH_STUDENTS_SQL = "select *\n" +
             "from students\n" +
             "WHERE role_id = 2 and remove = 0;";
@@ -221,6 +235,36 @@ public class StudentDAO implements IStudentDAO {
                 int remove = rs.getInt ( "remove" );
 
                 student = new Student ( code, firstName, lastName, dayBirth, email, phoneNum, address, avatar, classId, createDate, updateDate, roleId, testScore_id, classification_id, remove );
+            }
+        } catch (SQLException e) {
+            printSQLException ( e );
+        }
+        return student;
+    }
+    public Student selectScore(String code) {
+
+        Student student = null;
+        // Step 1: Establishing a Connection
+        try (Connection connection = getConnection ();
+             // Step 2:Create a statement using connection object
+             PreparedStatement preparedStatement = connection.prepareStatement ( SELECT_SCORE_STUDENTS_SQL );) {
+            preparedStatement.setString ( 1, code );
+            System.out.println ( preparedStatement );
+            // Step 3: Execute the query or update query
+            ResultSet rs = preparedStatement.executeQuery ();
+
+            // Step 4: Process the ResultSet object.
+            while (rs.next ()) {
+                String firstName = rs.getString ( "firstName" );
+                String lastName = rs.getString ( "lastName" );
+                int class_id = rs.getInt ( "class_id" );
+                int subjects_id = rs.getInt ( "subjects_id" );
+                float f_testScore = rs.getFloat ( "f_testScore" );
+                float s_testScore = rs.getFloat ( "s_testScore" );
+                float t_testScore = rs.getFloat ( "t_testScore" );
+                int classification_id = rs.getInt ( "classification_id" );
+
+//                student = new Student ( code, firstName, lastName, dayBirth, email, phoneNum, address, avatar, classId, createDate, updateDate, roleId, testScore_id, classification_id, remove );
             }
         } catch (SQLException e) {
             printSQLException ( e );
@@ -441,7 +485,7 @@ public class StudentDAO implements IStudentDAO {
     public List<Student> viewAllStudent(int offset, int noOfRecords) {
 //        String query = "select SQL_CALC_FOUND_ROWS * from students limit "
 //                + offset + ", " + noOfRecords;
-        String query = "select SQL_CALC_FOUND_ROWS * from students WHERE role_id = 2 and remove = 1 limit " + offset + ", " + noOfRecords + ";";
+        String query = "select SQL_CALC_FOUND_ROWS * from students WHERE role_id = 2 and remove = 1 ORDER BY createDate desc limit " + offset + ", " + noOfRecords + ";";
         List<Student> list = new ArrayList<Student> ();
         Student student = null;
         try {

@@ -33,7 +33,6 @@ import java.util.function.BiConsumer;
         maxRequestSize = 1024 * 1024 * 50) // 50MB
 public class StudentServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private IRoleDAO rolesDAO;
     private IClassDAO classDAO;
     private String errors = "";
     private IStudentDAO studentDAO;
@@ -44,13 +43,12 @@ public class StudentServlet extends HttpServlet {
 
     public void init() {
         studentDAO = new StudentDAO ();
-        rolesDAO = new RoleDAO ();
         classDAO = new ClassDAO ();
         subjectDAO = new SubjectDAO ();
         testScoreDAO = new TestScoreDAO ();
         roleDAO = new RoleDAO ();
         if ( this.getServletContext ().getAttribute ( "listRole" ) == null ) {
-            this.getServletContext ().setAttribute ( "listRole", rolesDAO.selectAllRoles () );
+            this.getServletContext ().setAttribute ( "listRole", roleDAO.selectAllRoles () );
         }
         if ( this.getServletContext ().getAttribute ( "listClass" ) == null ) {
             this.getServletContext ().setAttribute ( "listClass", classDAO.selectAllClass () );
@@ -148,6 +146,8 @@ public class StudentServlet extends HttpServlet {
             }
         } catch (SQLException ex) {
             throw new ServletException ( ex );
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException ( e );
         }
     }
 
@@ -156,7 +156,7 @@ public class StudentServlet extends HttpServlet {
         dispatcher.forward ( request, response );
     }
 
-/// List all student
+    /// List all student
     private void listAllStudentsPage(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
 
@@ -175,6 +175,7 @@ public class StudentServlet extends HttpServlet {
         RequestDispatcher view = request.getRequestDispatcher ( "/WEB-INF/admin/student/list.jsp" );
         view.forward ( request, response );
     }
+
     //search student
     private void searchAllField(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
         int page = 1;
@@ -196,11 +197,12 @@ public class StudentServlet extends HttpServlet {
 
             RequestDispatcher requestDispatcher = request.getRequestDispatcher ( "/WEB-INF/admin/student/list.jsp" );
             requestDispatcher.forward ( request, response );
-        }else {
+        } else {
             RequestDispatcher requestDispatcher = request.getRequestDispatcher ( "/students?action=list" );
             requestDispatcher.forward ( request, response );
         }
     }
+
     // List class Student
     private void listClassStudents(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
@@ -227,6 +229,7 @@ public class StudentServlet extends HttpServlet {
             requestDispatcher.forward ( request, response );
         }
     }
+
     private void listTrashStudents(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
         List<Student> listStudent = studentDAO.selectTrashListStudent ();
@@ -246,10 +249,12 @@ public class StudentServlet extends HttpServlet {
     }
 
     private void insertStudentVali(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, IOException, ServletException {
+            throws SQLException, IOException, ServletException, ClassNotFoundException {
         Student student = new Student ();
         boolean flag = true;
         Map<String, String> hashMap = new HashMap<String, String> ();
+        dhhighschool.studentmanagedh.Utils.Validator validation = new dhhighschool.studentmanagedh.Utils.Validator ();
+
         String code = newS_code ();
         String firstName = request.getParameter ( "firstName" );
         String lastName = request.getParameter ( "lastName" );
@@ -258,14 +263,40 @@ public class StudentServlet extends HttpServlet {
         String phone = request.getParameter ( "phone" );
         String address = request.getParameter ( "address" );
         String avatar = null;
-        int classes_id = Integer.parseInt ( request.getParameter ( "classes" ) );
-        int role_id = Integer.parseInt ( request.getParameter ( "role" ) );
-        if ( role_id == 1 ) {
-            student.setClass_id ( 100 );
+        String classes = request.getParameter ( "classes" );
+        int classes_id = 0;
+        if ( !validation.isIntValid ( String.valueOf ( classes ) ) ) {
+            flag = false;
+            hashMap.put ( "classId", "Class is a number" );
         } else {
-            student.setClass_id ( classes_id );
+            classes_id = Integer.parseInt ( classes );
+            if ( !classDAO.checkClassById ( classes_id ) ) {
+                flag = false;
+                hashMap.put ( "classID", "Class Not Exists" );
+            } else {
+                student.setClass_id ( classes_id );
+            }
         }
-        student.setRole_id ( Integer.parseInt ( request.getParameter ( "role" ) ) );
+//        String strClassId = String.valueOf ( classes_id );
+        String role = request.getParameter ( "role" );
+        int role_id = 0;
+        if ( !validation.isIntValid ( String.valueOf ( role ) ) ) {
+            flag = false;
+            hashMap.put ( "roleID", "Role is a number" );
+        } else {
+            role_id = Integer.parseInt ( role );
+            if ( !roleDAO.checkRoleById ( role_id ) ) {
+                flag = false;
+                hashMap.put ( "roleID", "Role Not Exists" );
+            } else {
+                if ( role_id == 1 ) {
+                    student.setClass_id ( 100 );
+                } else {
+                    student.setClass_id ( classes_id );
+                    student.setRole_id ( role_id );
+                }
+            }
+        }
 
         try {
             student.setCode ( code );
@@ -305,7 +336,7 @@ public class StudentServlet extends HttpServlet {
                 for (ConstraintViolation<Student> constraintViolation : constraintViolations) {
                     errors += "<div class=\"alert alert-danger alert-dismissible fade show\">\n" +
                             "<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>\n" +
-                            "<strong>" + constraintViolation.getPropertyPath () + "!</strong>" + " " + constraintViolation.getMessage () + "</div>";
+                            constraintViolation.getMessage () + "</div>";
                 }
                 errors += "</div>";
 
@@ -321,10 +352,6 @@ public class StudentServlet extends HttpServlet {
 
                 request.getRequestDispatcher ( "/WEB-INF/admin/student/add.jsp" ).forward ( request, response );
             } else {
-                if ( studentDAO.selectStudent ( code ) == null) {
-                    flag = false;
-                    hashMap.put ( "student", "Not Exists role id!" );
-                }
                 if ( studentDAO.selectStudentByPhone ( phone ) != null ) {
                     flag = false;
                     hashMap.put ( "phone", "Phone number already exist!" );
@@ -333,30 +360,22 @@ public class StudentServlet extends HttpServlet {
                     flag = false;
                     hashMap.put ( "email", "Email already exist!" );
                 }
-                if ( role_id != 1 && role_id != 2) {
-                    flag = false;
-                    hashMap.put ( "role id", "Not Exists role id!" );
-                }
-//                String catagoryRaw = request.getParameter("role");
-//                int catagory;
-//                try {
-//                    catagory = Integer.parseInt(catagoryRaw);
-//                    if (!roleDAO.checkRoleById (catagory)) {
-//                        throw new IOException();
-//                    }
-//                } catch (NumberFormatException | IOException e) {
-//                    hashMap.put ( "role id", "Not Exists role id!" );
-//                }
                 if ( studentDAO.selectStudentByEmail ( email ) != null ) {
                     flag = false;
                     hashMap.put ( "email", "Email already exist!" );
                 }
-                SimpleDateFormat sdf = new SimpleDateFormat ( "yyyy-MM-dd" );
-                Date dateinput = sdf.parse ( birthday );
-                int compareTime = dateinput.compareTo ( Date.from ( Instant.now () ) );
-                if ( compareTime > 0 ) {
+                dhhighschool.studentmanagedh.Utils.Validator validationDate = new dhhighschool.studentmanagedh.Utils.Validator ( birthday );
+                if ( !validationDate.isValid ( birthday ) ) {
                     flag = false;
-                    hashMap.put ( "birthday", "Birthday invalid! Not exceed the current time" );
+                    hashMap.put ( "date", "Birthday is not in the correct format" );
+                } else {
+                    SimpleDateFormat sdf = new SimpleDateFormat ( "yyyy-MM-dd" );
+                    Date dateinput = sdf.parse ( birthday );
+                    int compareTime = dateinput.compareTo ( Date.from ( Instant.now () ) );
+                    if ( compareTime > 0 ) {
+                        flag = false;
+                        hashMap.put ( "birthday", "Birthday invalid! Not exceed the current time" );
+                    }
                 }
                 if ( flag ) {
                     studentDAO.insertStudent ( student );
@@ -435,7 +454,7 @@ public class StudentServlet extends HttpServlet {
 
         String code = request.getParameter ( "code" );
         Student existingUser = studentDAO.selectStudent ( code );
-        if ( studentDAO.selectStudent ( code ) == null) {
+        if ( studentDAO.selectStudent ( code ) == null ) {
             hashMap.put ( "student", "Not Exists Student!" );
             errors = "<div>";
             hashMap.forEach ( new BiConsumer<String, String> () {
@@ -449,7 +468,7 @@ public class StudentServlet extends HttpServlet {
             errors += "</div>";
             request.setAttribute ( "student", existingUser );
             request.setAttribute ( "errors", errors );
-            RequestDispatcher dispatcher = request.getRequestDispatcher ( "/WEB-INF/admin/student/update.jsp" );
+            RequestDispatcher dispatcher = request.getRequestDispatcher ( "/students?action=list" );
             dispatcher.forward ( request, response );
         } else {
             request.setAttribute ( "code", existingUser.getCode () );
@@ -475,6 +494,7 @@ public class StudentServlet extends HttpServlet {
         Student student = new Student ();
         boolean flag = true;
         Map<String, String> hashMap = new HashMap<String, String> ();
+        dhhighschool.studentmanagedh.Utils.Validator validation = new dhhighschool.studentmanagedh.Utils.Validator ();
         try {
             String code = request.getParameter ( "code" );
             String firstName = request.getParameter ( "firstName" );
@@ -486,7 +506,20 @@ public class StudentServlet extends HttpServlet {
             String phone = request.getParameter ( "phoneNum" );
             String address = request.getParameter ( "address" );
             String avatar = null;
-            int classId = Integer.parseInt ( request.getParameter ( "classes" ) );
+            String classes = request.getParameter ( "classes" );
+            int classes_id = 0;
+            if ( !validation.isIntValid ( String.valueOf ( classes ) ) ) {
+                flag = false;
+                hashMap.put ( "classId", "Class is a number" );
+            } else {
+                classes_id = Integer.parseInt ( classes );
+                if ( !classDAO.checkClassById ( classes_id ) ) {
+                    flag = false;
+                    hashMap.put ( "classID", "Class Not Exists" );
+                } else {
+                    classes_id = Integer.parseInt ( classes );
+                }
+            }
             Timestamp updateDate = Timestamp.valueOf ( LocalDateTime.now () );
             for (Part part : request.getParts ()) {
                 if ( part.getName ().equals ( "file" ) ) {
@@ -504,7 +537,7 @@ public class StudentServlet extends HttpServlet {
                     }
                 }
             }
-            student = new Student ( code, firstName, lastName, birthday, email, phone, address, avatar, classId, updateDate );
+            student = new Student ( code, firstName, lastName, birthday, email, phone, address, avatar, classes_id, updateDate );
             ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory ();
             Validator validator = validatorFactory.getValidator ();
             Set<ConstraintViolation<Student>> constraintViolations = validator.validate ( student );
@@ -514,7 +547,7 @@ public class StudentServlet extends HttpServlet {
                 for (ConstraintViolation<Student> constraintViolation : constraintViolations) {
                     errors += "<div class=\"alert alert-danger alert-dismissible fade show\">\n" +
                             "<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>\n" +
-                            "<strong>" + constraintViolation.getPropertyPath () + "!</strong>" + " " + constraintViolation.getMessage () + "</div>";
+                            constraintViolation.getMessage () + "</div>";
                 }
                 errors += "</div>";
 
@@ -529,25 +562,44 @@ public class StudentServlet extends HttpServlet {
                 request.setAttribute ( "file", avatar );
 
                 request.getRequestDispatcher ( "/WEB-INF/admin/student/update.jsp" ).forward ( request, response );
-            }else {
-                if ( studentDAO.selectStudent ( code ) == null) {
+            } else {
+                if ( studentDAO.selectStudent ( code ) == null ) {
                     flag = false;
-                    hashMap.put ( "student", "Not Exists role id!" );
+                    hashMap.put ( "student", "Not Exists Student" );
+                    errors = "<div>";
+                    hashMap.forEach ( new BiConsumer<String, String> () {
+                        @Override
+                        public void accept(String keyError, String valueError) {
+                            errors += "<div class=\"alert alert-danger alert-dismissible fade show\">\n" +
+                                    "<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>\n" + "<strong>" + valueError
+                                    + "</strong></div>";
+                        }
+                    } );
+                    errors += "</div>";
+                    request.setAttribute ( "errors", errors );
+                    RequestDispatcher dispatcher = request.getRequestDispatcher ( "/students?action=list" );
+                    dispatcher.forward ( request, response );
                 }
                 if ( studentDAO.selectStudentByPhone ( phone ) != null && !studentDAO.selectStudent ( code ).getPhoneNum ().equals ( phone ) ) {
                     flag = false;
-                    hashMap.put ( "phone", "Phone number already exist!" );
+                    hashMap.put ( "phone", "Phone number already exist" );
                 }
-                if ( studentDAO.selectStudentByEmail ( email ) != null && !studentDAO.selectStudent ( code ).getEmail ().equals ( email )) {
+                if ( studentDAO.selectStudentByEmail ( email ) != null && !studentDAO.selectStudent ( code ).getEmail ().equals ( email ) ) {
                     flag = false;
-                    hashMap.put ( "email", "Email already exist!" );
+                    hashMap.put ( "email", "Email already exist" );
                 }
-                SimpleDateFormat sdf = new SimpleDateFormat ( "yyyy-MM-dd" );
-                Date dateinput = sdf.parse ( birthday );
-                int compareTime = dateinput.compareTo ( Date.from ( Instant.now () ) );
-                if ( compareTime > 0 ) {
+                dhhighschool.studentmanagedh.Utils.Validator validationDate = new dhhighschool.studentmanagedh.Utils.Validator ( birthday );
+                if ( !validationDate.isValid ( birthday ) ) {
                     flag = false;
-                    hashMap.put ( "birthday", "Birthday invalid! Not exceed the current time" );
+                    hashMap.put ( "date", "Birthday is not in the correct format" );
+                } else {
+                    SimpleDateFormat sdf = new SimpleDateFormat ( "yyyy-MM-dd" );
+                    Date dateinput = sdf.parse ( birthday );
+                    int compareTime = dateinput.compareTo ( Date.from ( Instant.now () ) );
+                    if ( compareTime > 0 ) {
+                        flag = false;
+                        hashMap.put ( "birthday", "Birthday invalid! Not exceed the current time" );
+                    }
                 }
                 if ( flag ) {
                     studentDAO.updateStudent ( student );
@@ -599,7 +651,7 @@ public class StudentServlet extends HttpServlet {
                     request.getRequestDispatcher ( "/WEB-INF/admin/student/update.jsp" ).forward ( request, response );
                 }
             }
-        }catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             errors = "<div class=\"alert alert-danger alert-dismissible fade show\">\n" +
                     "<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>\n";
             errors += "<strong>" + "Input format not right"
@@ -650,6 +702,7 @@ public class StudentServlet extends HttpServlet {
         RequestDispatcher dispatcher = request.getRequestDispatcher ( "/students?action=listTrash" );
         dispatcher.forward ( request, response );
     }
+
     private String extractFileName(Part part) {
         String contentDisp = part.getHeader ( "content-disposition" );
         String[] items = contentDisp.split ( ";" );
@@ -677,21 +730,40 @@ public class StudentServlet extends HttpServlet {
     // Add Score ------------------------------------------------------------------------------------------------------------
     private void showAddScoreForm(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, ServletException, IOException {
+        Map<String, String> hashMap = new HashMap<String, String> ();
         String code = request.getParameter ( "code" );
         Student existingUser = studentDAO.selectStudent ( code );
-        request.setAttribute ( "code", existingUser.getCode () );
-        request.setAttribute ( "firstName", existingUser.getFirstName () );
-        request.setAttribute ( "lastName", existingUser.getLastName () );
-        request.setAttribute ( "dayBirth", existingUser.getDayBirth () );
-        request.setAttribute ( "email", existingUser.getEmail () );
-        request.setAttribute ( "phoneNum", existingUser.getPhoneNum () );
-        request.setAttribute ( "address", existingUser.getAddress () );
-        request.setAttribute ( "avatar", existingUser.getAvatar () );
-        request.setAttribute ( "classes", existingUser.getClass_id () );
+        if ( studentDAO.selectStudent ( code ) == null ) {
+            hashMap.put ( "student", "Not Exists Student!" );
+            errors = "<div>";
+            hashMap.forEach ( new BiConsumer<String, String> () {
+                @Override
+                public void accept(String keyError, String valueError) {
+                    errors += "<div class=\"alert alert-danger alert-dismissible fade show\">\n" +
+                            "<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>\n" + "<strong>" + valueError
+                            + "</strong></div>";
+                }
+            } );
+            errors += "</div>";
+            request.setAttribute ( "student", existingUser );
+            request.setAttribute ( "errors", errors );
+            RequestDispatcher dispatcher = request.getRequestDispatcher ( "/students?action=list" );
+            dispatcher.forward ( request, response );
+        } else {
+            request.setAttribute ( "code", existingUser.getCode () );
+            request.setAttribute ( "firstName", existingUser.getFirstName () );
+            request.setAttribute ( "lastName", existingUser.getLastName () );
+            request.setAttribute ( "dayBirth", existingUser.getDayBirth () );
+            request.setAttribute ( "email", existingUser.getEmail () );
+            request.setAttribute ( "phoneNum", existingUser.getPhoneNum () );
+            request.setAttribute ( "address", existingUser.getAddress () );
+            request.setAttribute ( "avatar", existingUser.getAvatar () );
+            request.setAttribute ( "classes", existingUser.getClass_id () );
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher ( "/WEB-INF/admin/student/addScore.jsp" );
+            RequestDispatcher dispatcher = request.getRequestDispatcher ( "/WEB-INF/admin/student/addScore.jsp" );
 
-        dispatcher.forward ( request, response );
+            dispatcher.forward ( request, response );
+        }
     }
 
     private void addScoreVali(HttpServletRequest request, HttpServletResponse response)
@@ -701,9 +773,9 @@ public class StudentServlet extends HttpServlet {
         Map<String, String> hashMap = new HashMap<String, String> ();
         String firstName = request.getParameter ( "firstName" );
         String lastName = request.getParameter ( "lastName" );
+        String student_code = request.getParameter ( "code" );
 
         try {
-            String student_code = request.getParameter ( "code" );
             testScore.setStudent_code ( student_code );
             int subject_id = Integer.parseInt ( request.getParameter ( "subject" ) );
             testScore.setSubjects_id ( subject_id );
@@ -740,9 +812,26 @@ public class StudentServlet extends HttpServlet {
 
                 request.getRequestDispatcher ( "/WEB-INF/admin/student/addScore.jsp" ).include ( request, response );
             } else {
+                if ( studentDAO.selectStudent ( student_code ) == null ) {
+                    flag = false;
+                    hashMap.put ( "student", "Not Exists Student" );
+                    errors = "<div>";
+                    hashMap.forEach ( new BiConsumer<String, String> () {
+                        @Override
+                        public void accept(String keyError, String valueError) {
+                            errors += "<div class=\"alert alert-danger alert-dismissible fade show\">\n" +
+                                    "<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>\n" + "<strong>" + valueError
+                                    + "</strong></div>";
+                        }
+                    } );
+                    errors += "</div>";
+                    request.setAttribute ( "errors", errors );
+                    RequestDispatcher dispatcher = request.getRequestDispatcher ( "/students?action=list" );
+                    dispatcher.forward ( request, response );
+                }
                 if ( testScoreDAO.selectByCodeSubid ( student_code, subject_id ) != null ) {
                     flag = false;
-                    hashMap.put ( "Oop!", "Student not exists OR Score already exist! Please try choose more subjects" );
+                    hashMap.put ( "Oop!", "Student and Score already exist! Please try choose more subjects" );
                 }
                 if ( flag ) {
                     testScoreDAO.insertTestScores ( testScore );
@@ -792,13 +881,16 @@ public class StudentServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             errors = "<div class=\"alert alert-danger alert-dismissible fade show\">\n" +
                     "<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>\n";
-            errors += "<strong>" + "Invalid!"
+            errors += "<strong>" + "Score is number from 0 to 10!"
                     + "!</strong>";
 
             errors += "</div>";
 
             request.setAttribute ( "testScore", testScore );
             request.setAttribute ( "errors", errors );
+//            request.setAttribute ( "firstScore", firstScore );
+//            request.setAttribute ( "secondScore", secondScore );
+//            request.setAttribute ( "thirdScore", thirdScore );
             request.setAttribute ( "firstName", firstName );
             request.setAttribute ( "lastName", lastName );
             request.getRequestDispatcher ( "/WEB-INF/admin/student/addScore.jsp" ).include ( request, response );
@@ -806,9 +898,10 @@ public class StudentServlet extends HttpServlet {
             e.printStackTrace ();
         }
     }
+
     public int finalScore(float first, float second, float third) {
         int finalScore = 0;
-        float check = (first + second + third)/3;
+        float check = (first + second + third) / 3;
         if ( check >= 0 && check < 5.5 ) {
             finalScore = 4;
         }
@@ -823,14 +916,15 @@ public class StudentServlet extends HttpServlet {
         }
         return finalScore;
     }
+
     // List Leaderboard Student
     private void listLeaderboardStudents(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
         List<Student> allStudentList = studentDAO.selectAllStudent ();
         List<TestScores> leaderboard = testScoreDAO.leaderboard ();
-        List<Student> leaderboardStudent = new ArrayList<>();
+        List<Student> leaderboardStudent = new ArrayList<> ();
         for (TestScores score : leaderboard) {
-            for (Student student: allStudentList) {
+            for (Student student : allStudentList) {
                 if ( score.getStudent_code ().equals ( student.getCode () ) ) {
                     leaderboardStudent.add ( student );
                 }
@@ -845,24 +939,43 @@ public class StudentServlet extends HttpServlet {
     // Show profile
     private void showProfile(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, ServletException, IOException {
+        Map<String, String> hashMap = new HashMap<String, String> ();
         String code = request.getParameter ( "code" );
-//        User existingUser = userDAO.selectUser(id);
         Student existingUser = studentDAO.selectStudent ( code );
-        request.setAttribute ( "code", existingUser.getCode () );
-        request.setAttribute ( "firstName", existingUser.getFirstName () );
-        request.setAttribute ( "lastName", existingUser.getLastName () );
-        request.setAttribute ( "birthday", existingUser.getDayBirth () );
-        request.setAttribute ( "email", existingUser.getEmail () );
-        request.setAttribute ( "phoneNum", existingUser.getPhoneNum () );
-        request.setAttribute ( "address", existingUser.getAddress () );
-        request.setAttribute ( "avatar", existingUser.getAvatar () );
-        int classId = existingUser.getClass_id ();
-        String className = classDAO.selectClasses ( classId ).getClassName ();
-        request.setAttribute ( "classes", className );
-        request.setAttribute ( "createDate", existingUser.getCreateDate () );
-        request.setAttribute ( "updateDate", existingUser.getUpdateDate () );
+        if ( studentDAO.selectStudent ( code ) == null ) {
+            hashMap.put ( "student", "Not Exists Student!" );
+            errors = "<div>";
+            hashMap.forEach ( new BiConsumer<String, String> () {
+                @Override
+                public void accept(String keyError, String valueError) {
+                    errors += "<div class=\"alert alert-danger alert-dismissible fade show\">\n" +
+                            "<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>\n" + "<strong>" + valueError
+                            + "</strong></div>";
+                }
+            } );
+            errors += "</div>";
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher ( "/WEB-INF/admin/student/profile.jsp" );
-        dispatcher.forward ( request, response );
+            request.setAttribute ( "student", existingUser );
+            request.setAttribute ( "errors", errors );
+            RequestDispatcher dispatcher = request.getRequestDispatcher ( "/students?action=list" );
+            dispatcher.forward ( request, response );
+        } else {
+            request.setAttribute ( "code", existingUser.getCode () );
+            request.setAttribute ( "firstName", existingUser.getFirstName () );
+            request.setAttribute ( "lastName", existingUser.getLastName () );
+            request.setAttribute ( "birthday", existingUser.getDayBirth () );
+            request.setAttribute ( "email", existingUser.getEmail () );
+            request.setAttribute ( "phoneNum", existingUser.getPhoneNum () );
+            request.setAttribute ( "address", existingUser.getAddress () );
+            request.setAttribute ( "avatar", existingUser.getAvatar () );
+            int classId = existingUser.getClass_id ();
+            String className = classDAO.selectClasses ( classId ).getClassName ();
+            request.setAttribute ( "classes", className );
+            request.setAttribute ( "createDate", existingUser.getCreateDate () );
+            request.setAttribute ( "updateDate", existingUser.getUpdateDate () );
+
+            RequestDispatcher dispatcher = request.getRequestDispatcher ( "/WEB-INF/admin/student/profile.jsp" );
+            dispatcher.forward ( request, response );
+        }
     }
 }

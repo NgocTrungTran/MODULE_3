@@ -107,7 +107,6 @@ public class Student {
 
     }
 
-    @Length(min = 10, max = 10, message = "Code not exits!")
     public String getCode() {
         return code;
     }
@@ -206,7 +205,6 @@ public class Student {
         this.updateDate = updateDate;
     }
 
-    @Pattern(regexp = "([12])", message = "Not Exists role id!")
     public int getRole_id() {
         return role_id;
     }

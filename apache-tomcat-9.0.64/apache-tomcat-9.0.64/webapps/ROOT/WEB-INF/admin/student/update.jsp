@@ -130,7 +130,7 @@
                                                style="border: none; width: 50px">
                                         <label for="validationCustom07" style="margin-left: 10px">Choose more
                                             class</label>
-                                        <select id="validationCustom07" name="classes">
+                                        <select id="validationCustom07" name="classes" style="margin-left: 10px; height: 30px; width: 60px; border-radius: 5px; background-color: #C5DFEA">
                                             <c:forEach var="classes" items="${applicationScope.listClass}">
                                                 <option value="${classes.getC_id()}">
                                                     <c:out value="${classes.getClassName() }"/>

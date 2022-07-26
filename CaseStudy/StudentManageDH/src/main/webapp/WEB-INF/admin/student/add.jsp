@@ -145,7 +145,7 @@
 
                                     <div class="form-group mb-3" id="class_id">
                                         <label for="validationCustom08">Class</label>
-                                        <select id="validationCustom08" name="classes" class="form-select" aria-label="Default select example">
+                                        <select id="validationCustom08" name="classes" style="margin-left: 10px; height: 30px; width: 60px; border-radius: 5px; background-color: #C5DFEA">
                                             <c:forEach var="classes"
                                                        items="${applicationScope.listClass}">
                                                 <option value="${classes.getC_id()}">

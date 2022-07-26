@@ -68,7 +68,7 @@ public class TestScores {
         this.f_testScore = f_testScore;
     }
     @Max (value = 10, message = "Score must be greater than or equal to 10!")
-    @Min (value = 0, message = "Score must be less than or equal to 10!")
+    @Min (value = 0, message = "Score must be less than or equal to 0!")
     public float getS_testScore() {
         return s_testScore;
     }
@@ -77,7 +77,7 @@ public class TestScores {
         this.s_testScore = s_testScore;
     }
     @Max (value = 10, message = "Score must be greater than or equal to 10!")
-    @Min (value = 0, message = "Score must be less than or equal to 10!")
+    @Min (value = 0, message = "Score must be less than or equal to 0!")
     public float getT_testScore() {
         return t_testScore;
     }

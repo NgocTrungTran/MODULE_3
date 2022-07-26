@@ -194,6 +194,9 @@
                                             </c:if>
                                         </ul>
                                     </nav>
+                                    <div id="alertFormat">
+                                        ${errors}
+                                    </div>
                                 </div>
                             </div>
                         </div>
