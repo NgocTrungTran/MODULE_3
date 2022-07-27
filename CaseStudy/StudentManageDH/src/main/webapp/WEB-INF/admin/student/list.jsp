@@ -57,7 +57,7 @@
                                     <form method="get" action="/students?action=list">
                                         <input type="hidden" value="search" name="action">
                                         <div class="input-group">
-                                            <input type="search" class="form-control" name="search"
+                                            <input type="search" class="form-control" name="search" value="${search}"
                                                    placeholder="code, firstname, lastname, email, phone, or address">
                                             <button class="btn btn-primary" type="submit">
                                                 <i class="fe-search"></i>
