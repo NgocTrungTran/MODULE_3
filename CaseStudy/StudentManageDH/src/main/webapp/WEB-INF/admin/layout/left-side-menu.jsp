@@ -41,9 +41,9 @@
                         <li>
                             <a href="/students?action=leaderboard">Leaderboard</a>
                         </li>
-                        <li>
-                            <a href="#">News</a>
-                        </li>
+<%--                        <li>--%>
+<%--                            <a href="#">News</a>--%>
+<%--                        </li>--%>
                     </ul>
                 </li>
 

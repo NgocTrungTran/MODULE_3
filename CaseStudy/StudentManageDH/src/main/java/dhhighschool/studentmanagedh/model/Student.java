@@ -117,7 +117,7 @@ public class Student {
 
     @NotEmpty(message = "Firstname not empty!")
     @Length(min = 3, max = 45, message = "Length of Firstname form 3 - 45 character ")
-    @Pattern(regexp = "([A-Z])([a-z]){2,45}", message = "Format firstname not right!")
+    @Pattern(regexp = "([A-Z])([a-z]){2,45}", message = "Format firstname not right! Ex. John")
     public String getFirstName() {
         return firstName;
     }
@@ -128,7 +128,7 @@ public class Student {
 
     @NotEmpty(message = "Lastname not empty!")
     @Length(min = 3, max = 45, message = "Length of Lastname form 3 - 45 character ")
-    @Pattern(regexp = "(([A-Z])([a-z]){2,45} ?)+", message = "Format lastname not right!")
+    @Pattern(regexp = "(([A-Z])([a-z]){2,45} ?)+", message = "Format lastname not right! Ex. Nathans")
     public String getLastName() {
         return lastName;
     }
